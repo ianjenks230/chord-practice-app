@@ -63,6 +63,9 @@ document.getElementById('start').addEventListener('click', () => {
     const bpm = parseInt(document.getElementById('bpm').value);
     renderGrid(document.getElementById('key').value);
     clearInterval(intervalId);
+    beat = 0;
+    measure = 0;
+    tick(); // Call tick immediately so first beat is played
     intervalId = setInterval(tick, 60000 / bpm);
 });
 document.getElementById('stop').addEventListener('click', () => clearInterval(intervalId));
