@@ -1,10 +1,23 @@
-body { font-family: Arial, sans-serif; 
+body { 
+    font-family: Arial, sans-serif; 
     text-align: center; 
     background-image: url('background.avif');
     background-repeat: repeat;
-    background-size: auto;
- }
-#metronome { display: flex; justify-content: center; margin: 20px; }
+    background-size: 20vw auto; /* 20% of viewport width per repeat */
+    position: relative;
+}
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(128,128,128,0.4); /* gray, 40% opacity */
+    pointer-events: none;
+    z-index: 0;
+}
+#metronome, #chord-grid, #key, #bpm, #start, #stop, #mode {
+    position: relative;
+    z-index: 1;
+}
 .dot { width: 20px; height: 20px; background: gray; border-radius: 50%; margin: 0 10px; }
 .dot.active { background: blue; }
 #chord-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; max-width: 400px; margin: 0 auto; }
