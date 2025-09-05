@@ -3,6 +3,7 @@ const bluesProgression = [1, 1, 1, 1, 4, 4, 1, 1, 5, 4, 1, 5]; // Roman numerals
 
 let intervalId;
 let beat = 0;
+let beatsPerMeasure = 4; // Default to 4/4
 let measure = 0;
 let audioContext = new (window.AudioContext || window.webkitAudioContext)();
 let chords = [];
@@ -18,8 +19,15 @@ function getChord(key, numeral) {
     const root = (scale + interval) % 12;
     return keys[root];
 }
-
-
+function renderMetronome() {
+    const metronome = document.getElementById('metronome');
+    metronome.innerHTML = '';
+    for (let i = 0; i < beatsPerMeasure; i++) {
+        const dot = document.createElement('div');
+        dot.classList.add('dot');
+        metronome.appendChild(dot);
+    }
+}
 // Render grid
 function renderGrid(key) {
     const grid = document.getElementById('chord-grid');
@@ -32,13 +40,14 @@ function renderGrid(key) {
         if (i === measure) div.classList.add('active');
         grid.appendChild(div);
     });
+    renderMetronome();
 }
 
 // Metronome tick
 function tick() {
     const dots = document.querySelectorAll('.dot');
     dots.forEach(d => d.classList.remove('active'));
-    dots[beat].classList.add('active');
+    if (dots[beat]) dots[beat].classList.add('active');
     
     if (document.getElementById('mode').value === 'visual-audio') {
         const oscillator = audioContext.createOscillator();
@@ -53,14 +62,19 @@ function tick() {
         document.querySelectorAll('.chord')[measure].classList.add('active');
     }
     
-    beat = (beat + 1) % 4;
+    beat = (beat + 1) % beatsPerMeasure;
     if (beat === 0) measure = (measure + 1) % 12;
 }
 
 // Event listeners
 document.getElementById('key').addEventListener('change', e => renderGrid(e.target.value));
+document.getElementById('signature').addEventListener('change', e => {
+    beatsPerMeasure = parseInt(e.target.value, 10);
+    renderMetronome();
+});
 document.getElementById('start').addEventListener('click', () => {
     const bpm = parseInt(document.getElementById('bpm').value);
+    beatsPerMeasure = parseInt(document.getElementById('signature').value, 10);
     renderGrid(document.getElementById('key').value);
     clearInterval(intervalId);
     beat = 0;
@@ -77,4 +91,5 @@ keys.forEach(k => {
     opt.textContent = k;
     document.getElementById('key').appendChild(opt);
 });
+beatsPerMeasure = parseInt(document.getElementById('signature').value, 10);
 renderGrid('C');
