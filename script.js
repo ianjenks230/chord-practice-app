@@ -8,11 +8,17 @@ let audioContext = new (window.AudioContext || window.webkitAudioContext)();
 let chords = [];
 
 // Function to get chord name based on key and numeral
+
 function getChord(key, numeral) {
     const scale = keys.indexOf(key);
-    const root = (scale + [0, 0, 0, 0, 5, 5, 0, 0, 7, 5, 0, 7][numeral - 1]) % 12; // Simplified major chords
+    let interval = 0;
+    if (numeral === 1) interval = 0;
+    else if (numeral === 4) interval = 5;
+    else if (numeral === 5) interval = 7;
+    const root = (scale + interval) % 12;
     return keys[root];
 }
+
 
 // Render grid
 function renderGrid(key) {
