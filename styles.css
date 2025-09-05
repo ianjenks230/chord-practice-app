@@ -29,7 +29,7 @@ body::before {
     max-width: 600px;
     margin: 40px auto 0 auto;
     padding: 32px 24px 24px 24px;
-    background: rgba(255,255,255,0.92);
+    background: rgba(255,255,255,0.99);
     border-radius: 18px;
     box-shadow: 0 6px 32px rgba(0,0,0,0.13);
 }
@@ -128,9 +128,9 @@ h1, h2 {
     position: relative;
 }
 .chord.active {
-    background: #ffe066;
+    background: #68a0f0;
     color: #222;
-    border: 2.5px solid #f7b801;
+    border: 2.5px solid #4c8ce7;
     box-shadow: 0 4px 16px rgba(247,184,1,0.13);
 }
 
@@ -156,4 +156,4 @@ h1, h2 {
 /* Hide scrollbars for aesthetics */
 body::-webkit-scrollbar {
     width: 0;
-    background: transparent;
+    background: transparent;}
