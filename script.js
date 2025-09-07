@@ -65,13 +65,47 @@ function tick() {
     beat = (beat + 1) % beatsPerMeasure;
     if (beat === 0) measure = (measure + 1) % 12;
 }
+// Add a countdown display element if not present
+if (!document.getElementById('countdown')) {
+    const countdownDiv = document.createElement('div');
+    countdownDiv.id = 'countdown';
+    countdownDiv.style.position = 'fixed';
+    countdownDiv.style.top = '50%';
+    countdownDiv.style.left = '50%';
+    countdownDiv.style.transform = 'translate(-50%, -50%)';
+    countdownDiv.style.fontSize = '4rem';
+    countdownDiv.style.fontWeight = 'bold';
+    countdownDiv.style.background = 'rgba(255,255,255,0.85)';
+    countdownDiv.style.borderRadius = '20px';
+    countdownDiv.style.padding = '40px 60px';
+    countdownDiv.style.zIndex = '100';
+    countdownDiv.style.display = 'none';
+    document.body.appendChild(countdownDiv);
+}
 
+function showCountdown(seconds, callback) {
+    const countdownDiv = document.getElementById('countdown');
+    countdownDiv.style.display = 'block';
+    countdownDiv.textContent = seconds;
+    let current = seconds;
+    const countdownInterval = setInterval(() => {
+        current--;
+        if (current > 0) {
+            countdownDiv.textContent = current;
+        } else {
+            clearInterval(countdownInterval);
+            countdownDiv.style.display = 'none';
+            callback();
+        }
+    }, 1000);
+}
 // Event listeners
 document.getElementById('key').addEventListener('change', e => renderGrid(e.target.value));
 document.getElementById('signature').addEventListener('change', e => {
     beatsPerMeasure = parseInt(e.target.value, 10);
     renderMetronome();
 });
+
 document.getElementById('start').addEventListener('click', () => {
     const bpm = parseInt(document.getElementById('bpm').value);
     beatsPerMeasure = parseInt(document.getElementById('signature').value, 10);
@@ -79,11 +113,20 @@ document.getElementById('start').addEventListener('click', () => {
     clearInterval(intervalId);
     beat = 0;
     measure = 0;
-    tick(); // Call tick immediately so first beat is played
-    intervalId = setInterval(tick, 60000 / bpm);
-});
-document.getElementById('stop').addEventListener('click', () => clearInterval(intervalId));
 
+    // Show countdown, then start metronome
+    showCountdown(3, () => {
+        tick(); // Call tick immediately so first beat is played
+        intervalId = setInterval(tick, 60000 / bpm);
+    });
+});
+
+document.getElementById('stop').addEventListener('click', () => {
+    clearInterval(intervalId);
+    // Hide countdown if visible
+    const countdownDiv = document.getElementById('countdown');
+    if (countdownDiv) countdownDiv.style.display = 'none';
+});
 // Initialize
 keys.forEach(k => {
     const opt = document.createElement('option');
