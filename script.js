@@ -83,7 +83,12 @@ if (!document.getElementById('countdown')) {
     document.body.appendChild(countdownDiv);
 }
 
+let countdownActive = false; // Track if countdown is running
+
 function showCountdown(seconds, callback) {
+    countdownActive = true;
+    const startBtn = document.getElementById('start');
+    startBtn.disabled = true;
     const countdownDiv = document.getElementById('countdown');
     countdownDiv.style.display = 'block';
     countdownDiv.textContent = seconds;
@@ -95,6 +100,8 @@ function showCountdown(seconds, callback) {
         } else {
             clearInterval(countdownInterval);
             countdownDiv.style.display = 'none';
+            countdownActive = false;
+            startBtn.disabled = false;
             callback();
         }
     }, 1000);
@@ -107,6 +114,7 @@ document.getElementById('signature').addEventListener('change', e => {
 });
 
 document.getElementById('start').addEventListener('click', () => {
+    if (countdownActive) return; // Prevent multiple countdowns/metronomes
     const bpm = parseInt(document.getElementById('bpm').value);
     beatsPerMeasure = parseInt(document.getElementById('signature').value, 10);
     renderGrid(document.getElementById('key').value);
@@ -123,10 +131,13 @@ document.getElementById('start').addEventListener('click', () => {
 
 document.getElementById('stop').addEventListener('click', () => {
     clearInterval(intervalId);
-    // Hide countdown if visible
+    // Hide countdown if visible and re-enable start button
     const countdownDiv = document.getElementById('countdown');
     if (countdownDiv) countdownDiv.style.display = 'none';
+    countdownActive = false;
+    document.getElementById('start').disabled = false;
 });
+
 // Initialize
 keys.forEach(k => {
     const opt = document.createElement('option');
