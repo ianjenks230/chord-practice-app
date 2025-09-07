@@ -1,5 +1,6 @@
 const keys = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
 const bluesProgression = [1, 1, 1, 1, 4, 4, 1, 1, 5, 4, 1, 5]; // Roman numerals: I-IV-I-I-IV-IV-I-I-V-IV-I-V
+const romanNumerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
 
 let intervalId;
 let beat = 0;
@@ -7,8 +8,6 @@ let beatsPerMeasure = 4; // Default to 4/4
 let measure = 0;
 let audioContext = new (window.AudioContext || window.webkitAudioContext)();
 let chords = [];
-
-// Function to get chord name based on key and numeral
 
 function getChord(key, numeral) {
     const scale = keys.indexOf(key);
@@ -28,15 +27,21 @@ function renderMetronome() {
         metronome.appendChild(dot);
     }
 }
-// Render grid
+
+// Function to get chord name based on key and numeral
 function renderGrid(key) {
     const grid = document.getElementById('chord-grid');
     grid.innerHTML = '';
+    const displayMode = document.getElementById('display') ? document.getElementById('display').value : 'chord';
     chords = bluesProgression.map(num => getChord(key, num));
-    chords.forEach((chord, i) => {
+    bluesProgression.forEach((num, i) => {
         const div = document.createElement('div');
         div.classList.add('chord');
-        div.textContent = chord;
+        if (displayMode === 'roman') {
+            div.textContent = romanNumerals[num - 1];
+        } else {
+            div.textContent = chords[i];
+        }
         if (i === measure) div.classList.add('active');
         grid.appendChild(div);
     });
@@ -112,7 +117,10 @@ document.getElementById('signature').addEventListener('change', e => {
     beatsPerMeasure = parseInt(e.target.value, 10);
     renderMetronome();
 });
-
+// Add event listener for display mode
+document.getElementById('display').addEventListener('change', () => {
+    renderGrid(document.getElementById('key').value);
+});
 document.getElementById('start').addEventListener('click', () => {
     if (countdownActive) return; // Prevent multiple countdowns/metronomes
     const bpm = parseInt(document.getElementById('bpm').value);
